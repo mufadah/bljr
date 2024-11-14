@@ -4,6 +4,8 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const user = require("./app/api/v1/users/routes/user.route");
 const cors = require("cors");
+const not_found = require('./app/middleware/notfound')
+const handler_error = require('./app/middleware/handle.error')
 
 const app = express();
 app.use(cors());
@@ -23,5 +25,8 @@ app.get(link, (req, res) =>
 
 
 app.use(link, user);
+
+app.use(not_found)
+app.use(handler_error)
 
 module.exports = app;

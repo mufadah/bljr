@@ -18,4 +18,4 @@ const hapus = async (req, res, next) => {
 };
 
 
-module.exports = { index,hapus };
+module.exports = { index, hapus };
