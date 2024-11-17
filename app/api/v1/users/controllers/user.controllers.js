@@ -1,5 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
-const { getAllUsers, getOneUsers } = require("../services/user.services");
+const { getAllUsers, getOneUsers, createUser } = require("../services/user.services");
 
 const index = async (req, res, next) => {
   try {
@@ -27,5 +27,13 @@ const hapus = async (req, res, next) => {
   }
 };
 
+const create = async (req, res, next) => {
+  try {
+    const result = await createUser(req);
+    res.status(StatusCodes.CREATED).json({ status: "success", user: result });
+  } catch (error) {
+    next(error);
+  }
+};
 
-module.exports = { index, hapus, find };
+module.exports = { index, hapus, find, create };

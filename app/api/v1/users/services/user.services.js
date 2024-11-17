@@ -31,7 +31,24 @@ const updateUser = async(req)=>{
 }
 
 const createUser = async(req)=>{
+  const { username, email, password } = req.body
+  
+  if (!username || !email || !password){
+    throw new BadRequest('Username, email, dan password wajib diisi.')
+  }
 
+  const userBaru ={
+    id: uuidv4(),
+    username,
+    email,
+    role:'user',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
+
+  const result = await user.create(userBaru);
+
+  return result
 }
 const deleteUser = async(req)=>{
 
