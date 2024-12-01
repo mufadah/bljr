@@ -1,5 +1,5 @@
 const User = require('../models/user.models')
-const { BadRequestError, NotfoundError } = require("../../../../error/index")
+const { BadRequest, NotFound } = require("../../../../error/index")
 const { query } = require('express')
 
 const getAllUsers = async(req) => {
@@ -10,6 +10,8 @@ const getAllUsers = async(req) => {
     if(email) condition['email'] = { $regex: email, options: 'i' }
 
     const result = await User.find(condition)
+    .populate({ path: 'avatar', select: 'path url' })
+    .select('username email bio role avatar')
     .limit(limit)
     .skip(limit * (page - 1))
 
@@ -20,25 +22,30 @@ const getAllUsers = async(req) => {
 const getOneUsers = async(req) => {
     const { id } = req.params
 
-    const result = await User.findOne({ id, role: 'user' })
-    if(!result) throw new NotfoundError(`user dengan id ${id} tidak ditemukan.`)
+    const result = await User.findOne({ _id: id, role: 'user' })
+    .populate({ path: 'avatar', select: 'path url' })
+    .select('username email bio role avatar')
+    if(!result) throw new NotFound(`user dengan id ${id} tidak ditemukan.`)
 
     return result
 }
 
 const createUsers = async(req) => {
-    const { username, email, password } = req.body
+    const { username, email, password, confirmPassword } = req.body
+    if(password !== confirmPassword) throw new BadRequest( 'password tidak sesuai')
+    const result = await User.create({ username, email, password, confirmPassword })
 
-    const result = await User.create({ username, email, password })
+    delete result._doc.password //supaya pass tidak ditampilkan
+
     return result
 }
 
 const updateUsers = async(req) => {
-    const { username } = req.params
-    const { email, password } = req.body
+    const { id } = req.params
+    const { username, email, bio, avatar } = req.body
 
-    const result = await User.findOneAndUpdate({username}, {email, password})
-    if(!result) throw new NotfoundError(`user dengan id ${id} tidak ditemukan.`)
+    const result = await User.findOneAndUpdate({_id: id, role:'user'}, {username, email, bio, avatar})
+    if(!result) throw new NotFound(`user dengan id ${id} tidak ditemukan.`)
     return result
 }
 

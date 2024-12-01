@@ -5,5 +5,5 @@ router.get("/users", index);
 router.get("/users/:id", find);
 router.delete("/users/:username", hapus);
 router.post("/users", create);
-router.put("/users/:username", update);
+router.put("/users/:id", update);
 module.exports = router;

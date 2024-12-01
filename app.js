@@ -6,6 +6,7 @@ const user = require("./app/api/v1/users/routes/user.route");
 const cors = require("cors");
 const not_found = require('./app/middleware/notfound')
 const handler_error = require('./app/middleware/handle.error')
+const avatarRoute = require('./app/api/v1/users/routes/user.avatar.route')
 
 const app = express();
 app.use(cors());
@@ -25,6 +26,7 @@ app.get(link, (req, res) =>
 
 
 app.use(link, user);
+app.use(link, avatarRoute);
 
 app.use(not_found)
 app.use(handler_error)
